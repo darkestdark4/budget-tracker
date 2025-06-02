@@ -30,8 +30,9 @@ class TransactionController {
     try {
       const transaction = await TransactionService.getById(req.params.id);
       if (transaction.user_id !== req.userId) {
-        return ForbiddenError("Kamu tidak bisa Akses transaksi ini");
+        throw new ForbiddenError("Kamu tidak bisa akses transaksi ini");
       }
+
       res.status(200).json({
         succes: true,
         message: "transaksi ditemukan",
@@ -63,7 +64,7 @@ class TransactionController {
     try {
       const transaction = await TransactionService.getById(req.params.id);
       if (transaction.user_id !== req.userId) {
-        throw new ForbiddenError("Kamu tidak bisa Akses transaksi ini");
+        throw new ForbiddenError("Kamu tidak bisa akses transaksi ini");
       }
 
       const data = { ...req.body };
@@ -80,6 +81,11 @@ class TransactionController {
 
   async delete(req, res, next) {
     try {
+      const transaction = await TransactionService.getById(req.params.id);
+      if (transaction.user_id !== req.userId) {
+        throw new ForbiddenError("Kamu tidak bisa akses transaksi ini");
+      }
+
       await TransactionService.delete(req.params.id);
       res
         .status(200)
